@@ -4,6 +4,7 @@ date: "2014-12-26"
 categories:
     - "python"
 ---
+**This post is DRAFT**
 
 Python 3.3 intorduces [PEP 393 Flexible String Representation](https://www.python.org/dev/peps/pep-0393/).
 This is not only memory efficient, but also make it fast especially extension module.
@@ -82,7 +83,7 @@ So it is more compact than compact representation.
 Legacy representation is only for support deprecated APIs.
 
 
-## Example 1: ujson
+## Example 1: [ujson](https://github.com/esnme/ultrajson)
 
 Typical JSON contains many ascii strings.  Encoding to utf-8 can be skipped when unicode is Compact ASCII.
 Otherwise, I don't use `PyUnicode_AsUTF8AndSize()` since it can be slower and memory inefficient.
@@ -127,5 +128,12 @@ $ python3.4 -m timeit -n 10000 -s 'import ujson; x = ["a"*10]*100' 'ujson.dumps(
 ```
 
 
-## Example 2: meinheld
+## Example 2: [meinheld](https://github.com/mopemope/meinheld)
 
+HTTP header field name is ASCII.  And [PEP 3333](https://www.python.org/dev/peps/pep-3333/) specifies header value should be decoded by latin-1.
+
+`PyUnicode_New()` accepts maxchar as second argument. When maxchar<128, it creates Compact ASCII unicode.
+
+Since field name is ASCII, environment name like `"HTTP_ACCEPT_ENCODING"` can be created as Compact ASCII.
+
+field value may contain non-ASCII characters.  So I use `PyUnicode_DecodeLatin1()`.  It checks maxchar and create best unicode representation.
