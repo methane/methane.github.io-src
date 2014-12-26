@@ -1,3 +1,10 @@
 baseurl = "http://methane.github.io"
 languageCode = "en-us"
 title = "Python Bytes"
+
+[permalinks]
+    post = "/:year/:month/:filename/"
+
+[params]
+    twitter = "https://twitter.com/methane"
+    github = "https://github.com/methane"
