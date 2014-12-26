@@ -1,7 +1,6 @@
 ---
 title: "Faster unicode access from Python 3.3/C API"
 date: "2014-12-26"
-draft: true
 categories:
     - "python"
 ---
