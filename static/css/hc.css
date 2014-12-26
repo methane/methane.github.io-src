@@ -1,5 +1,9 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 
+html
+{
+  font-size: 100%;
+}
 
 body
 {
@@ -7,7 +11,8 @@ body
   background-color:#f0f0f0;
   width:100%;
   border-top:solid #d90006;
-  border-width:4px
+  border-width:4px;
+  font-size: 100%;
 }
 
 h1,h2,h3,h4,h5,h6
