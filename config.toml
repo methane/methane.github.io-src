@@ -1,6 +1,7 @@
 baseurl = "http://methane.github.io"
 languageCode = "en-us"
 title = "Python Bytes"
+disqusShortname = "pythonbyte"
 
 [permalinks]
     posts = "/:year/:month/:filename/"
