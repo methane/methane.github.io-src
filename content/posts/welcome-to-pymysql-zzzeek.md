@@ -24,4 +24,4 @@ But this is a huge chance to me and Python/MySQL world. SQLAlchemy is one of gre
 Despite I'm not a good document/test writer, I have some experience of high performance Python and asynchronous I/O programming.
 So I want to improve PyMySQL with Mike and OpenStack.
 
-On the other hand, I have some ideas about improving mysqlclient-python: Support new async APIs in MariaDB's connectors, use ctypes or cffi to improve performance on PyPy. But I have enough time. So I decided not doing them in foreseeable future. It doesn't means mysqlclient-python is deprecated. It will be stable MySQL driver as it has so far.
+On the other hand, I have some ideas about improving mysqlclient-python: Support new async APIs in MariaDB's connectors, use ctypes or cffi to improve performance on PyPy. But I don't have enough time. So I decided not doing them in foreseeable future. It doesn't means mysqlclient-python is deprecated. It will be stable MySQL driver as it has so far.
