@@ -23,9 +23,9 @@ I've made pull request with "[RFC]" in title. We've discussed about feature and 
 
 ## 2. Write benchmark program.
 
-Before starting tuning up, I've prepared benchmark to confirm performance difference caused by it.
+Before starting tuning, I've prepared benchmark program to confirm performance difference.
 
-Writing benchmark in Go is easy: Write function like `BenchmarkXxxx(b *testing.B)` in `xxx_test.go`. To see allocations, call `b.ReportAllocs()` in it.
+Writing benchmark program in Go is easy: Write function like `BenchmarkXxxx(b *testing.B)` in `xxx_test.go`. To see allocations, call `b.ReportAllocs()` in it.
 
 Here is benchmark function I've wrote:
 
@@ -84,9 +84,9 @@ PASS
 BenchmarkInterpolation      5000          4095 ns/op        1144 B/op         15 allocs/op
 ```
 
-`-test.run=none` stop running non benchmark tests. `-test.benchtime=10ms` reduces execution time and log size.
+`-test.run=none` prevents running tests before benchmark. `-test.benchtime=10ms` reduces execution time and log size.
 
-Now I have `trace.log`. Open it with vim and search `interpolateParams`. Cut unnecessary backtrace before it. I can see stacktrace like this:
+Now I have `trace.log`. Open it with vim and search `interpolateParams`. Cut unnecessary stacktrace before it. I can see stacktrace like this:
 
 ```
 tracealloc(0xc2080100e0, 0x70, string)
@@ -131,7 +131,7 @@ func (mc *mysqlConn) interpolateParams(query string, args []driver.Value) (strin
 
 ## 4. Tuning up
 
-OK. It's time to start tuning up. Let's record current benchmark result. I use it later.
+OK. It's time to start optimize. Let's record current benchmark result. I use it later.
 
 ```console
 $ go test -bench=BenchmarkInterpolation | tee old.txt
@@ -149,7 +149,7 @@ parts := []string{"SELECT SLEEP(", escape(42), ")"}
 query := strings.Join(parts, "")
 ```
 
-Since Go's string is immutable, making temporary string cause allocations. So stop using string and `stirngs.Join()`, use `[]byte` and `append` instead. I can use `strconv.AppendInt()` and `strconv.AppendFloat()`.
+Since Go's string is immutable, making temporary string cause allocations. So I replaced `stirngs.Join()` with `[]byte` and `append`. I can use `strconv.AppendInt()` and `strconv.AppendFloat()` to avoid temporal string when formatting int64 and float64.
 
 Now my code looks like:
 
@@ -282,11 +282,11 @@ It reduces two allocations:
 
 ### 4.4. Avoid `range` when iterating string
 
-Usually, `range` is used for iterating slice. But `for _, c := range s` (s is string) produces `rune`, not `byte`.
+Usually, `range` is used for iterating slice. But `for _, c := range s` (where `s` is string) produces `rune`, not `byte`.
 
-My first code uses `for i, c := range([]byte(s)) {`. But Go 1.4 make new slice and copy s to it, while Go 1.5 optimize it out.
+My first code used `for i, c := range([]byte(s)) {`. But Go 1.4 make new slice and copy `s` to it. (Go 1.5 optimize it out).
 
-So I've used C like for loop:
+So I've used C-like for loop:
 
 ```
 @@ -210,8 +210,8 @@ func (mc *mysqlConn) interpolateParams(query string, args []driver.Value) (strin
@@ -340,17 +340,17 @@ Concatenating slices can be written like `buf = append(buf, token...)`. Basicall
 ...
 ```
 
-I cannot reduce allocation from this change. But I can improve readability a lot.
+I couldn't reduce allocation from this change. But I could improve readability a lot.
 
 
 ### 4.6. Make two same function: for []byte and for string
 
 MySQL requires same escaping for binary and string.
 
-Sadly, since Go doesn't have "read only slice", converting between `string` and `[]byte` cause allocation and copy. Current compiler can optimize it only for very easy cases.
+Sadly, since Go doesn't have "read only slice", converting between `string` and `[]byte` cause allocation and copy. Current compiler can optimize it only for very simple cases.
 
 So I've made mostly same two functions for `[]byte` and `string`.
-Generally speaking, duplicated code is evil. But `TEXT` and `BLOB` column may store very large data. I want to avoid allocating and copying large data. So I did evil.
+Generally speaking, duplicated code is evil. But `TEXT` and `BLOB` column may store large data. I want to avoid allocating and copying large data. So I did evil.
 
 It reduces one more allocation.
 
@@ -369,7 +369,7 @@ It reduces one more allocation.
 
 Last two allocation is: (1) Make scratchpad buffer for interpolate, and (2) convert it to string.
 
-I can remove them by create MySQL packet directly. But it breaks separation of packet layer and higher layer. So I didn't it.
+I can remove them by create MySQL packet directly. But it may breaks separation of packet layer and higher layer. So I didn't it for now.
 
 Instead, I borrowed send/receive buffer and use it as scratchpad buffer. It reduces one allocation.
 
@@ -386,6 +386,6 @@ Instead, I borrowed send/receive buffer and use it as scratchpad buffer. It redu
 
 ## Conclusion
 
-Go's compiler is not intelligent compared with gcc or clagn. You should use some tips to reduce allocation.
+Go's compiler is not intelligent compared with gcc or clang. You should use some tips to reduce allocation.
 
 But Go's runtime is great. I can measure and find allocation quickly. I think it is more important than magical optimization.
