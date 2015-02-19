@@ -11,14 +11,14 @@ Why this feature is important is described in [here](https://vividcortex.com/blo
 
 When writing low level library like mysql driver, you can't assume user's performance requiremnt. Especially, avoiding memory allocations is important. Go's GC is not so fast. And everyone want memory usage of their server is stable.
 
-So I've reduced allocations in the interpolation as possible. I write how I did tuned up it and coding tips to avoid allocations.
+So I've reduced allocations in the interpolation as possible. This post describes how I did it and coding tips to avoid allocations.
 
 
 ## 1. Write it correct.
 
-Since it was new feature, I write it quickly like writing Python code. (Go can be used like Python or C!).
+Since it was new feature, I wrote it quickly like writing Python code. (Go can be used like Python or C!).
 
-I've make pull request with "[RFC]" in title. We've discussed about feature and rough design first.
+I've made pull request with "[RFC]" in title. We've discussed about feature and rough design first.
 
 
 ## 2. Write benchmark program.
