@@ -1,6 +1,6 @@
 ---
 title: "Reduce allocation in Go code"
-date: "2015-02-18"
+date: "2015-02-19"
 categories:
     - "go"
 ---
@@ -282,13 +282,13 @@ It reduces two allocations:
 
 ### 4.4. Avoid `range` when iterating string
 
-Usually, `range` is used for iterating slice. But `for _, c := range s` (where `s` is string) produces `rune`, not `byte`.
+Usually, `range` is used for iterating slice. But `for _, c := range s` (where `s` is `string`) produces `rune`, not `byte`.
 
 My first code used `for i, c := range([]byte(s)) {`. But Go 1.4 make new slice and copy `s` to it. (Go 1.5 optimize it out).
 
 So I've used C-like for loop:
 
-```
+```diff
 @@ -210,8 +210,8 @@ func (mc *mysqlConn) interpolateParams(query string, args []driver.Value) (strin
         buf := make([]byte, 0, estimated)
         argPos := 0
@@ -312,7 +312,7 @@ It reduces one allocation.
 
 Concatenating slices can be written like `buf = append(buf, token...)`. Basically, `buf` and `token` should have same type. But there is one exception: when `buf` is `[]byte`, `token` can be `string`.
 
-```
+```diff
 @@ -210,17 +210,19 @@ func (mc *mysqlConn) interpolateParams(query string, args []driver.Value) (strin
         argPos := 0
 
