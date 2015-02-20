@@ -1,4 +1,4 @@
-baseurl = "http://methane.github.io"
+baseurl = "https://methane.github.io"
 languageCode = "en-us"
 title = "Python Bytes"
 disqusShortname = "pythonbyte"
