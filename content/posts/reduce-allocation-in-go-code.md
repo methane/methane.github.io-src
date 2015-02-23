@@ -63,7 +63,7 @@ func BenchmarkInterpolation(b *testing.B) {
 
 To run it:
 
-```console
+```bash
 $ go test -bench=BenchmarkInterpolation
 PASS
 BenchmarkInterpolation	  300000	      3887 ns/op	    1144 B/op	      15 allocs/op
@@ -77,7 +77,7 @@ When setting `allocfreetrace=1` to environment variable `GODEBUG`, you can see s
 
 But using it while running `go test -bench=BenchmarkInterpolation` makes huge log including large noise. To reduce log, build `mysql.test` with `go test -c` and run it.
 
-```console
+```bash
 $ go test -c
 $ GODEBUG=allocfreetrace=1 ./mysql.test -test.run=none -test.bench=BenchmarkInter -test.benchtime=10ms 2>trace.log
 PASS
@@ -133,7 +133,7 @@ func (mc *mysqlConn) interpolateParams(query string, args []driver.Value) (strin
 
 OK. It's time to start optimize. Let's record current benchmark result. I use it later.
 
-```console
+```bash
 $ go test -bench=BenchmarkInterpolation | tee old.txt
 PASS
 BenchmarkInterpolation	  500000	      3942 ns/op	    1144 B/op	      15 allocs/op
@@ -183,7 +183,7 @@ I've made first optimization. Let's measure it.
 
 `benchcmp` is famous tool to compare benchmark result. You can include it's output in commit log. It makes your commit looks cool.
 
-```console
+```bash
 $ go get -u golang.org/x/tools/cmd/benchcmp
 $ go test -bench=BenchmarkInterpolation > new.txt
 $ benchcmp old.txt new.txt
