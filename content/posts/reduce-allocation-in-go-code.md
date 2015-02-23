@@ -9,7 +9,7 @@ I've implemented parameter interpolation in [go-sql-driver/mysql](https://github
 
 Why this feature is important is described in [here](https://vividcortex.com/blog/2014/11/19/analyzing-prepared-statement-performance-with-vividcortex/) and [here](https://eng.uservoice.com/blog/2015/01/28/introducing-gocraft/dbr/). I don't say lot about it here.
 
-When writing low level library like mysql driver, you can't assume user's performance requiremnt. Especially, avoiding memory allocations is important. Go's GC is not so fast. And everyone want memory usage of their server is stable.
+When writing low level library like MySQL driver, you can't assume user's performance requirements. Especially, avoiding memory allocations is important. Go's GC is not so fast. And everyone want memory usage of their server is stable.
 
 So I've reduced allocations in the interpolation as possible. This post describes how I did it and coding tips to avoid allocations.
 
