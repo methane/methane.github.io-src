@@ -222,7 +222,14 @@ blockquote
 
 pre
 {
-  background:#f5f5f8
+  background:#f5f5f8;
+  padding: 0px;
+}
+
+pre, pre code
+{
+  white-space: pre;
+  font-size: 12px;
 }
 
 #social-wrapper
